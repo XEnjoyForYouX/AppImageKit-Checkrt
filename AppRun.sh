@@ -43,9 +43,12 @@ if [ -n "$cxxpath" ] || [ -n "$gccpath" ]; then
 fi
 
 # Find correct root CA file
-POSSIBLE_CERTIFICATES="/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt"
+_POSSIBLE_CERTIFICATES="/etc/ssl/certs/ca-bundle.crt \
+/etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt \
+/etc/ssl/ca-bundle.pem /etc/pki/tls/cacert.pem"
+
 if [ -z "$SSL_CERT_FILE" ]; then
-    for i in $POSSIBLE_CERTIFICATES; do 
+    for i in $_POSSIBLE_CERTIFICATES; do 
         if [ -f "$i" ]; then
             export SSL_CERT_FILE="$i"
             break
