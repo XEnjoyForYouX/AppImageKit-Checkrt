@@ -42,6 +42,20 @@ if [ -n "$cxxpath" ] || [ -n "$gccpath" ]; then
   export LD_LIBRARY_PATH="${cxxpath}${gccpath}${LD_LIBRARY_PATH}"
 fi
 
+# Find correct root CA file
+_POSSIBLE_CERTIFICATES="/etc/ssl/certs/ca-bundle.crt \
+/etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt \
+/etc/ssl/ca-bundle.pem /etc/pki/tls/cacert.pem"
+
+if [ -z "$SSL_CERT_FILE" ]; then
+    for i in $_POSSIBLE_CERTIFICATES; do 
+        if [ -f "$i" ]; then
+            export SSL_CERT_FILE="$i"
+            break
+        fi
+    done
+fi
+
 #echo ">>>>> $LD_LIBRARY_PATH"
 #echo ">>>>> $LD_PRELOAD"
 
