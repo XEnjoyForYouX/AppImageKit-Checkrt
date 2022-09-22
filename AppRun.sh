@@ -8,7 +8,7 @@ cxxpre=""
 gccpre=""
 execpre=""
 libc6arch="libc6,x86-64"
-exec="./bin/$(sed -n 's|^Exec=||p' $(ls -1 *.desktop))"
+exec="./bin/$(sed -n -e 's|%f||' -e 's|^Exec=||p' $(ls -1 *.desktop))"
 
 if [ -n "$APPIMAGE" ] && [ "$(file -b "$APPIMAGE" | cut -d, -f2)" != " x86-64" ]; then
   libc6arch="libc6"
@@ -42,6 +42,11 @@ if [ -n "$cxxpath" ] || [ -n "$gccpath" ]; then
   export LD_LIBRARY_PATH="${cxxpath}${gccpath}${LD_LIBRARY_PATH}"
 fi
 
+# Force xcb platform for Qt applications
+if [ -z "${QT_QPA_PLATFORM}" ]; then
+    export QT_QPA_PLATFORM=xcb
+fi
+
 # Find correct root CA file
 _POSSIBLE_CERTIFICATES="/etc/ssl/certs/ca-bundle.crt \
 /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt \
@@ -59,6 +64,5 @@ fi
 #echo ">>>>> $LD_LIBRARY_PATH"
 #echo ">>>>> $LD_PRELOAD"
 
-$exec "$*"
-exit $?
+exec $exec "$@"
 
